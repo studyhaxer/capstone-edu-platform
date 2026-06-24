@@ -1,6 +1,6 @@
 # AI-Powered Educational Platform
 
-A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a 40-day capstone project (Days 20–60), deployed at [usachunian.com](https://usachunian.com).
+A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a capstone project (Days 20–36, with buffer to Day 37), deployed at [usachunian.com](https://usachunian.com).
 
 This is not a tutorial project. It's a portfolio piece demonstrating backend API design, database modeling, authentication, AI integration, and a full React frontend, built incrementally and deployed to production.
 
@@ -70,10 +70,36 @@ uvicorn main:app --reload
 
 Visit `http://localhost:8000/docs` for the interactive API docs.
 
-## Progress
+## Roadmap (Days 20–36)
 
-- [x] **Day 20** — Project structure, database schema, all 4 SQLAlchemy models, Pydantic schemas
-- [ ] **Days 21** — JWT register/login
+**Phase A — Core Backend (20–23)**
+- [x] **Day 20** — Project structure, database schema, `User`/`Course`/`Lesson`/`Enrollment` models, Pydantic schemas
+- [ ] **Day 21** — Auth routes: `POST /auth/register`, `POST /auth/login`, JWT token response
+- [ ] **Day 22** — Course CRUD (teacher role), role-based dependency guards
+- [ ] **Day 23** — Lesson CRUD + student enrollment (`POST /enroll`, list enrolled courses)
+
+**Phase B — AI Features (24–26)**
+- [ ] **Day 24** — AI lesson summarizer: `POST /lessons/{id}/summarize`, OpenAI integration
+- [ ] **Day 25** — AI MCQ quiz generator: `POST /lessons/{id}/quiz`, `Quiz`/`Question` models
+- [ ] **Day 26** — Quiz attempt + scoring: `POST /quiz/{id}/attempt`, attempt history
+
+**Phase C — File Upload + Polish (27–28)**
+- [ ] **Day 27** — File upload for notes/PDFs, static file serving
+- [ ] **Day 28** — Testing (pytest, httpx TestClient), edge cases, pagination review, cleanup
+
+**Phase D — React Frontend (29–33)**
+- [ ] **Day 29** — Vite + React setup, login/register forms, JWT in localStorage, axios client
+- [ ] **Day 30** — Teacher dashboard: create course, add lessons, upload notes, view enrollments
+- [ ] **Day 31** — Student dashboard: browse/enroll courses, read lessons, view AI summary
+- [ ] **Day 32** — Quiz UI + results: take quiz, show score, attempt history
+- [ ] **Day 33** — UI polish: mobile layout, loading states, error messages, Tailwind cleanup
+
+**Phase E — Deployment (34–36)**
+- [ ] **Day 34** — SQLite → PostgreSQL migration, `.env` config, Alembic migrations
+- [ ] **Day 35** — Backend deploy (Railway/Render), DB connected, health check endpoint
+- [ ] **Day 36** — Frontend deploy (Vercel/Netlify) + usachunian.com domain, end-to-end smoke test — **LIVE**
+
+> Buffer is built in — finishing a day late anywhere still lands the project live by Day 37.
 
 ## License
 
