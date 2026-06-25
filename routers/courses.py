@@ -10,13 +10,10 @@ router = APIRouter(prefix="/courses", tags=["Courses"])
 
 @router.post("/", response_model=CourseOut, status_code=201)
 def create_course(data: CourseCreate, db: Session = Depends(get_db),current_user: User = Depends(require_any_role("teacher"))):
-    title=data.title
-    description=data.description
-    owner_id=current_user.id
     new_course = Course(
-        title=title,
-        description=description,
-        owner_id=owner_id,
+        title=data.title,
+        description=data.description,
+        owner_id=current_user.id,
     )
     db.add(new_course)
     db.commit()
@@ -25,8 +22,8 @@ def create_course(data: CourseCreate, db: Session = Depends(get_db),current_user
 
 @router.get("/", response_model=list[CourseOut])
 def get_all_courses(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    course = db.query(Course).all()
-    return course
+    courses = db.query(Course).all()
+    return courses
 
 @router.get("/{course_id}", response_model=CourseOut)
 def fetch_course_byid(course_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
