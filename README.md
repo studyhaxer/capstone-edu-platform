@@ -8,7 +8,7 @@ This is not a tutorial project. It's a portfolio piece demonstrating backend API
 
 | Layer | Technology |
 |---|---|
-| Backend API | FastAPI + Python 3.13 |
+| Backend API | FastAPI + Python 3.14 |
 | Database | PostgreSQL (Supabase) |
 | ORM | SQLAlchemy 2.0 |
 | Auth | JWT + bcrypt |
@@ -36,6 +36,10 @@ capstone-edu-platform/
 ├── auth.py               # JWT + bcrypt auth
 ├── exceptions.py    # Custom exceptions
 ├── pagination.py    # Pagination dependency
+├── routers/
+│   ├── __init__.py
+│   ├── auth.py        # POST /auth/register, POST /auth/login
+│   └── users.py       # GET /users/me, GET /users (admin-only)
 ├── requirements.txt
 ├── .env                    # Local secrets (not committed)
 ├── .gitignore
@@ -62,6 +66,8 @@ DATABASE_URL=postgresql://<user>:<password>@<host>:5432/postgres
 
 > **Note:** If connecting to Supabase from a network without IPv6 support, use the **session pooler** connection string (`*.pooler.supabase.com`) rather than the direct `db.*.supabase.co` host, which is IPv6-only.
 
+> **Note:** Requires `psycopg2-binary` (included in `requirements.txt`) as the PostgreSQL driver for SQLAlchemy. If you see `ModuleNotFoundError: No module named 'psycopg2'`, run `pip install psycopg2-binary`.
+
 Run the server:
 
 ```bash
@@ -74,7 +80,7 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 
 **Phase A — Core Backend (20–23)**
 - [x] **Day 20** — Project structure, database schema, `User`/`Course`/`Lesson`/`Enrollment` models, Pydantic schemas
-- [ ] **Day 21** — Auth routes: `POST /auth/register`, `POST /auth/login`, JWT token response
+- [x] **Day 21** — Auth routes: `routers/` package, `POST /auth/register`, `POST /auth/login` (JWT), `GET /users/me`, `GET /users` (admin-only, role guard)
 - [ ] **Day 22** — Course CRUD (teacher role), role-based dependency guards
 - [ ] **Day 23** — Lesson CRUD + student enrollment (`POST /enroll`, list enrolled courses)
 
