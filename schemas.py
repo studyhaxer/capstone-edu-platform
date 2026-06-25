@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 from typing import List, Optional, Literal
 from datetime import datetime
 
@@ -31,7 +31,7 @@ class CourseCreate(BaseModel):
 
 class UserRegister(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
     role: Literal["student", "teacher", "admin"] = "student"
 
