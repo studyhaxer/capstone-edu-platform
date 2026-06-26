@@ -1,6 +1,6 @@
 # AI-Powered Educational Platform
 
-A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a capstone project (Days 20–36, with buffer to Day 37), deployed at [usachunian.com](https://usachunian.com).
+A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a capstone project (Days 20–32, with buffer to Day 33), deployed at [usachunian.com](https://usachunian.com).
 
 This is not a tutorial project. It's a portfolio piece demonstrating backend API design, database modeling, authentication, AI integration, and a full React frontend, built incrementally and deployed to production.
 
@@ -12,7 +12,7 @@ This is not a tutorial project. It's a portfolio piece demonstrating backend API
 | Database | PostgreSQL (Supabase) |
 | ORM | SQLAlchemy 2.0 |
 | Auth | JWT + bcrypt |
-| AI | OpenAI API (gpt-4o-mini) |
+| AI | Groq API · `llama-3.3-70b-versatile` (free tier) |
 | Frontend | React + Tailwind CSS |
 | Deployment | Railway (API) + Supabase (DB) + usachunian.com |
 
@@ -41,7 +41,7 @@ capstone-edu-platform/
 │   ├── auth.py          # POST /auth/register, POST /auth/login
 │   ├── users.py         # GET /users/me, GET /users (admin-only)
 │   ├── courses.py       # Course CRUD (teacher-owned)
-│   ├── lessons.py       # Nested lesson routes under /courses, plus /lessons/{id}
+│   ├── lessons.py       # Nested lesson routes under /courses, plus /lessons/{id}, /lessons/{id}/summarize
 │   └── enrollments.py   # POST /enroll, GET /my-courses
 ├── requirements.txt
 ├── .env                    # Local secrets (not committed)
@@ -79,7 +79,9 @@ uvicorn main:app --reload
 
 Visit `http://localhost:8000/docs` for the interactive API docs.
 
-## Roadmap (Days 20–36)
+## Roadmap (Days 20–32)
+
+> 📌 **Revised on Day 24.** The original plan ran through Day 36 with quizzes, scoring, and file upload built in before launch. To protect the ship date, those three features were moved to **post-launch** (see below), compressing the live deploy from Day 36 to **Day 32**.
 
 **Phase A — Core Backend (20–23)**
 - [x] **Day 20** — Project structure, database schema, `User`/`Course`/`Lesson`/`Enrollment` models, Pydantic schemas
@@ -87,28 +89,32 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 - [x] **Day 22** — Course CRUD: teacher-only create, ownership-checked update/delete, authenticated read access for all
 - [x] **Day 23** — Lesson CRUD (nested under courses, ownership via `lesson.course.owner_id`) + student enrollment (`POST /enroll` with duplicate-enrollment guard, `GET /my-courses`)
 
-**Phase B — AI Features (24–26)**
-- [ ] **Day 24** — AI lesson summarizer: `POST /lessons/{id}/summarize`, OpenAI integration
-- [ ] **Day 25** — AI MCQ quiz generator: `POST /lessons/{id}/quiz`, `Quiz`/`Question` models
-- [ ] **Day 26** — Quiz attempt + scoring: `POST /quiz/{id}/attempt`, attempt history
+**Phase B — AI Integration (24)**
+- [x] **Day 24** — AI lesson summarizer: `POST /lessons/{id}/summarize`, Groq (`llama-3.3-70b-versatile`) integration
 
-**Phase C — File Upload + Polish (27–28)**
-- [ ] **Day 27** — File upload for notes/PDFs, static file serving
-- [ ] **Day 28** — Testing (pytest, httpx TestClient), edge cases, pagination review, cleanup
+**Phase C — Testing (25)**
+- [ ] **Day 25** — Testing + error handling: pytest, httpx TestClient, role-based route tests
 
-**Phase D — React Frontend (29–33)**
-- [ ] **Day 29** — Vite + React setup, login/register forms, JWT in localStorage, axios client
-- [ ] **Day 30** — Teacher dashboard: create course, add lessons, upload notes, view enrollments
-- [ ] **Day 31** — Student dashboard: browse/enroll courses, read lessons, view AI summary
-- [ ] **Day 32** — Quiz UI + results: take quiz, show score, attempt history
-- [ ] **Day 33** — UI polish: mobile layout, loading states, error messages, Tailwind cleanup
+**Phase D — React Frontend (26–29)**
+- [ ] **Day 26** — Vite + React setup, login/register forms, JWT in localStorage, axios client
+- [ ] **Day 27** — Teacher dashboard: create course, add lessons, view enrollments
+- [ ] **Day 28** — Student dashboard: browse/enroll courses, read lessons, view AI summary
+- [ ] **Day 29** — UI polish: mobile layout, loading states, error messages, Tailwind cleanup
 
-**Phase E — Deployment (34–36)**
-- [ ] **Day 34** — SQLite → PostgreSQL migration, `.env` config, Alembic migrations
-- [ ] **Day 35** — Backend deploy (Railway/Render), DB connected, health check endpoint
-- [ ] **Day 36** — Frontend deploy (Vercel/Netlify) + usachunian.com domain, end-to-end smoke test — **LIVE**
+**Phase E — Deployment (30–32)**
+- [ ] **Day 30** — PostgreSQL migration, `.env` config, Alembic migrations
+- [ ] **Day 31** — Backend deploy (Railway), DB connected, health check endpoint
+- [ ] **Day 32** — Frontend deploy (Vercel/Netlify) + usachunian.com domain, end-to-end smoke test — **LIVE**
 
-> Buffer is built in — finishing a day late anywhere still lands the project live by Day 37.
+> Buffer is built in — finishing a day late anywhere still lands the project live by Day 33.
+
+### Deferred to Post-Launch
+
+| Feature | Originally Planned | Why It Moved | What It Needs |
+|---|---|---|---|
+| AI MCQ Quiz Generator | Day 25–26 | Needs more prompt-engineering polish before it's reliable for the MVP | Prompt engineering · `QuizQuestion` schema · `POST /lessons/{id}/quiz` |
+| Quiz Attempt + Scoring | Day 26 | Depends directly on the quiz generator | Attempt model · score calculation · attempt history endpoint |
+| File Upload (notes/PDFs) | Day 27 | Railway's filesystem is ephemeral — needs proper Supabase Storage/S3 setup, which fits better post-deploy | Supabase Storage or S3 · static file serving · upload endpoint |
 
 ## Completed API Endpoints
 
@@ -136,6 +142,9 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 **Enrollments**
 - ✅ POST `/enroll` (student only, 400 on duplicate)
 - ✅ GET `/my-courses` (student only)
+
+**AI**
+- ✅ POST `/lessons/{id}/summarize` — Groq (`llama-3.3-70b-versatile`)
 
 ## License
 
