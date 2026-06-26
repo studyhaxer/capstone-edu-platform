@@ -45,6 +45,9 @@ class UserOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class EnrollmentCreate(BaseModel):
+    course_id: int
+
 class EnrollmentOut(BaseModel):
     id: int
     student_id: int

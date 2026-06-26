@@ -4,7 +4,6 @@ from database import get_db
 from models import Course,User
 from schemas import CourseCreate, CourseOut
 from auth import get_current_user, require_any_role
-from typing import List
 
 router = APIRouter(prefix="/courses", tags=["Courses"])
 

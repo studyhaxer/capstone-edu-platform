@@ -4,6 +4,8 @@ import models
 from routers import auth as auth_router
 from routers import users as user_router
 from routers import courses as courses_router
+from routers.lessons import course_lessons_router, lesson_router
+from routers import enrollments as enrollments_router
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -12,6 +14,9 @@ app = FastAPI(title="EduPlatform API")
 app.include_router(auth_router.router)
 app.include_router(user_router.router)
 app.include_router(courses_router.router)
+app.include_router(course_lessons_router)
+app.include_router(lesson_router)
+app.include_router(enrollments_router.router)
 
 
 @app.get("/")
