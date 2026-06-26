@@ -63,3 +63,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int] = None
+    
+class SummaryOut(BaseModel):
+    lesson_id: int
+    summary: str

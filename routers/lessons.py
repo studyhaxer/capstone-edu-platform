@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from database import get_db
 from auth import get_current_user, require_any_role
 from models import Course,User,Lesson
-from schemas import LessonCreate, LessonOut
+from schemas import LessonCreate, LessonOut, SummaryOut
+from ai import get_lesson_summary
 
 course_lessons_router = APIRouter(prefix="/courses", tags=["lessons"])
 
@@ -50,11 +51,21 @@ def update_lesson(lesson_id: int, data: LessonCreate, db: Session = Depends(get_
 
 @lesson_router.delete("/{lesson_id}", status_code=204)
 def delete_lesson(lesson_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_any_role("teacher"))):
-    fetch_lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
-    if not fetch_lesson:
+    fetchlesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
+    if not fetchlesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
-    if fetch_lesson.course.owner_id != current_user.id:
+    if fetchlesson.course.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not your Lesson")
-    db.delete(fetch_lesson)
+    db.delete(fetchlesson)
     db.commit()   
     return Response(status_code=204)
+
+@lesson_router.post("/{lesson_id}/summarize", response_model=SummaryOut)
+def summarize_lesson(lesson_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    if not lesson.content or not lesson.content.strip():
+        raise HTTPException(status_code=400, detail="Lesson has no content to summarize")
+    summary = get_lesson_summary(lesson.content)
+    return SummaryOut(lesson_id= lesson.id, summary=summary)
