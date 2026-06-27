@@ -48,8 +48,11 @@ capstone-edu-platform/
 ├── .gitignore
 └── tests/
     ├── __init__.py
-    └── conftest.py
-```
+    ├── conftest.py          # Fixtures: client, teacher_token, student_token, teacher2_token
+    ├── test_auth.py         # Register, login, duplicate, wrong password
+    ├── test_courses.py      # CRUD + ownership + role guards
+    ├── test_lessons.py      # Create, update, delete + ownership 403s
+    └── test_enrollments.py  # Enroll, duplicate 400, teacher 403, my-courses```
 
 ## Local Setup
 
@@ -93,7 +96,7 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 - [x] **Day 24** — AI lesson summarizer: `POST /lessons/{id}/summarize`, Groq (`llama-3.3-70b-versatile`) integration
 
 **Phase C — Testing (25)**
-- [ ] **Day 25** — Testing + error handling: pytest, httpx TestClient, role-based route tests
+- [x] **Day 25** — Testing + error handling: pytest, httpx TestClient, role-based route tests (28 tests, 0 failures)
 
 **Phase D — React Frontend (26–29)**
 - [ ] **Day 26** — Vite + React setup, login/register forms, JWT in localStorage, axios client
@@ -115,6 +118,17 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 | AI MCQ Quiz Generator | Day 25–26 | Needs more prompt-engineering polish before it's reliable for the MVP | Prompt engineering · `QuizQuestion` schema · `POST /lessons/{id}/quiz` |
 | Quiz Attempt + Scoring | Day 26 | Depends directly on the quiz generator | Attempt model · score calculation · attempt history endpoint |
 | File Upload (notes/PDFs) | Day 27 | Railway's filesystem is ephemeral — needs proper Supabase Storage/S3 setup, which fits better post-deploy | Supabase Storage or S3 · static file serving · upload endpoint |
+
+## Test Coverage
+
+28 automated tests — run with `pytest tests/ -v`
+
+| File | Tests |
+|---|---|
+| `test_auth.py` | Register ✅, duplicate email 400, login ✅, wrong password 401, ghost user 401 |
+| `test_courses.py` | Create (teacher 201, student 403, unauth 401), get all, get by id, 404, update own, update other's 403, delete own, delete other's 403 |
+| `test_lessons.py` | Create (teacher 201, student 403), get list, update own, update other's 403, delete own, delete other's 403 |
+| `test_enrollments.py` | Enroll 201, duplicate 400, teacher 403, unauth 401, my-courses list, empty list |
 
 ## Completed API Endpoints
 
