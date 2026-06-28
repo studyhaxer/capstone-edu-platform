@@ -29,30 +29,48 @@ Four core tables, with `Enrollment` acting as a many-to-many bridge between `Use
 
 ```
 capstone-edu-platform/
-├── main.py            # FastAPI app entry point
-├── database.py         # DB connection setup
-├── models.py            # SQLAlchemy models
-├── schemas.py          # Pydantic schemas
-├── auth.py               # JWT + bcrypt authentication
-├── exceptions.py    # Custom exceptions
-├── pagination.py    # Pagination dependency
+├── main.py                  # FastAPI app entry point
+├── database.py              # DB connection setup
+├── models.py                # SQLAlchemy models
+├── schemas.py               # Pydantic schemas
+├── auth.py                  # JWT + bcrypt authentication
+├── exceptions.py            # Custom exceptions
+├── pagination.py            # Pagination dependency
 ├── routers/
 │   ├── __init__.py
-│   ├── auth.py          # POST /auth/register, POST /auth/login
-│   ├── users.py         # GET /users/me, GET /users (admin-only)
-│   ├── courses.py       # Course CRUD (teacher-owned)
-│   ├── lessons.py       # Nested lesson routes under /courses, plus /lessons/{id}, /lessons/{id}/summarize
-│   └── enrollments.py   # POST /enroll, GET /my-courses
+│   ├── auth.py              # POST /auth/register, POST /auth/login
+│   ├── users.py             # GET /users/me, GET /users (admin-only)
+│   ├── courses.py           # Course CRUD (teacher-owned)
+│   ├── lessons.py           # Nested lesson routes under /courses, plus /lessons/{id}, /lessons/{id}/summarize
+│   └── enrollments.py       # POST /enroll, GET /my-courses
 ├── requirements.txt
-├── .env                    # Local secrets (not committed)
+├── .env                     # Local secrets (not committed)
 ├── .gitignore
-└── tests/
-    ├── __init__.py
-    ├── conftest.py          # Fixtures: client, teacher_token, student_token, teacher2_token
-    ├── test_auth.py         # Register, login, duplicate, wrong password
-    ├── test_courses.py      # CRUD + ownership + role guards
-    ├── test_lessons.py      # Create, update, delete + ownership 403s
-    └── test_enrollments.py  # Enroll, duplicate 400, teacher 403, my-courses```
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py          # Fixtures: client, teacher_token, student_token, teacher2_token
+│   ├── test_auth.py         # Register, login, duplicate, wrong password
+│   ├── test_courses.py      # CRUD + ownership + role guards
+│   ├── test_lessons.py      # Create, update, delete + ownership 403s
+│   └── test_enrollments.py  # Enroll, duplicate 400, teacher 403, my-courses
+└── frontend/
+    ├── index.html
+    ├── vite.config.js
+    ├── package.json
+    └── src/
+        ├── main.jsx         # React entry point
+        ├── App.jsx          # Routes setup
+        ├── App.css
+        ├── index.css
+        ├── api/
+        │   └── axiosClient.js   # Axios instance with base URL + auth header
+        ├── components/
+        │   └── Navbar.jsx       # Top navigation bar
+        └── pages/
+            ├── Register.jsx     # ✅ Done — register form with role select
+            ├── Login.jsx        # Day 27 — login + JWT storage
+            └── Dashboard.jsx    # Day 28/29 — teacher & student dashboards
+```
 
 ## Local Setup
 
