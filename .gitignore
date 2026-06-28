@@ -3,4 +3,6 @@
 test.db
 __pycache__/
 .pytest_cache/
-Add-Content .gitignore "`nfrontend.zip"
+*.zip
+node_modules/
+frontend/dist/
