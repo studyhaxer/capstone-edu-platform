@@ -1,6 +1,6 @@
 # AI-Powered Educational Platform
 
-A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a capstone project (Days 20–32, with buffer to Day 33), deployed at [usachunian.com](https://usachunian.com).
+A production-grade web application for course creation, enrollment, and AI-assisted learning — built as a capstone project (Days 20–33), deployed at [usachunian.com](https://usachunian.com).
 
 This is not a tutorial project. It's a portfolio piece demonstrating backend API design, database modeling, authentication, AI integration, and a full React frontend, built incrementally and deployed to production.
 
@@ -82,9 +82,9 @@ uvicorn main:app --reload
 
 Visit `http://localhost:8000/docs` for the interactive API docs.
 
-## Roadmap (Days 20–32)
+## Roadmap (Days 20–33)
 
-> 📌 **Revised on Day 24.** The original plan ran through Day 36 with quizzes, scoring, and file upload built in before launch. To protect the ship date, those three features were moved to **post-launch** (see below), compressing the live deploy from Day 36 to **Day 32**.
+> 📌 **Revised on Day 26.** One page / one feature per day for deep understanding. Post-launch features (MCQ quiz generator, file upload) remain deferred. Launch target: **Day 33**.
 
 **Phase A — Core Backend (20–23)**
 - [x] **Day 20** — Project structure, database schema, `User`/`Course`/`Lesson`/`Enrollment` models, Pydantic schemas
@@ -98,18 +98,17 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 **Phase C — Testing (25)**
 - [x] **Day 25** — Testing + error handling: pytest, httpx TestClient, role-based route tests (28 tests, 0 failures)
 
-**Phase D — React Frontend (26–29)**
-- [ ] **Day 26** — Vite + React setup, login/register forms, JWT in localStorage, axios client
-- [ ] **Day 27** — Teacher dashboard: create course, add lessons, view enrollments
-- [ ] **Day 28** — Student dashboard: browse/enroll courses, read lessons, view AI summary
-- [ ] **Day 29** — UI polish: mobile layout, loading states, error messages, Tailwind cleanup
+**Phase D — React Frontend (26–30)**
+- [x] **Day 26** — Register page: Vite + React setup, register form, axios client, success state
+- [ ] **Day 27** — Login page: login form, JWT token storage in localStorage, role-based redirect
+- [ ] **Day 28** — Teacher Dashboard: create course, add lessons, view enrollments
+- [ ] **Day 29** — Student Dashboard: browse/enroll courses, read lessons, view AI summary
+- [ ] **Day 30** — UI Polish: loading states, error messages, responsive layout, Tailwind cleanup
 
-**Phase E — Deployment (30–32)**
-- [ ] **Day 30** — PostgreSQL migration, `.env` config, Alembic migrations
-- [ ] **Day 31** — Backend deploy (Railway), DB connected, health check endpoint
-- [ ] **Day 32** — Frontend deploy (Vercel/Netlify) + usachunian.com domain, end-to-end smoke test — **LIVE**
-
-> Buffer is built in — finishing a day late anywhere still lands the project live by Day 33.
+**Phase E — Deployment (31–33)**
+- [ ] **Day 31** — PostgreSQL migration + `.env` config
+- [ ] **Day 32** — Backend deploy (Railway), DB connected, health check endpoint
+- [ ] **Day 33** — Frontend deploy (Vercel/Netlify) + usachunian.com domain, end-to-end smoke test — **LIVE**
 
 ### Deferred to Post-Launch
 
