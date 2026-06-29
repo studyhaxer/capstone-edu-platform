@@ -1,3 +1,8 @@
+import { NavLink  } from "react-router-dom";
+const navClass = ({ isActive }) =>
+  isActive
+    ? "bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition"
+    : "text-white hover:text-blue-300 px-4 py-2 transition";
 function Navbar() {
   return (
     <nav className="bg-slate-900 px-6 py-4 flex items-center justify-between shadow-md">
@@ -11,19 +16,35 @@ function Navbar() {
       </div>
       <ul className="flex items-center gap-6">
         <li>
-          <a href="/" className="text-slate-200 hover:text-white font-medium transition">
+          <NavLink to="/" className={navClass}>
             Home
-          </a>
+          </NavLink>
         </li>
         <li>
-          <a href="/login" className="text-slate-200 hover:text-white font-medium transition">
+          <NavLink to="/courses" className={navClass}>
+            Courses
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/about" className={navClass}>
+            About
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/contact" className={navClass}>
+            Contact
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink to="/login" className={navClass}>
             Login
-          </a>
+          </NavLink>
         </li>
         <li>
-          <a href="/register" className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition">
+          <NavLink to="/register" className={navClass}>
             Register
-          </a>
+          </NavLink>
         </li>
       </ul>
     </nav>
