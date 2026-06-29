@@ -118,7 +118,7 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 
 **Phase D — React Frontend (26–30)**
 - [x] **Day 26** — Register page: Vite + React setup, register form, axios client, success state
-- [ ] **Day 27** — Login page: login form, JWT token storage in localStorage, role-based redirect
+- [x] **Day 27** — Login page: login form, JWT token storage in localStorage, role-based redirect
 - [ ] **Day 28** — Teacher Dashboard: create course, add lessons, view enrollments
 - [ ] **Day 29** — Student Dashboard: browse/enroll courses, read lessons, view AI summary
 - [ ] **Day 30** — UI Polish: loading states, error messages, responsive layout, Tailwind cleanup
