@@ -65,11 +65,13 @@ capstone-edu-platform/
         ├── api/
         │   └── axiosClient.js   # Axios instance with base URL + auth header
         ├── components/
-        │   └── Navbar.jsx       # Top navigation bar
+        │   ├── Navbar.jsx           # Public top navigation bar
+        │   └── TeacherNavbar.jsx    # Teacher portal navigation bar
         └── pages/
-            ├── Register.jsx     # ✅ Done — register form with role select
-            ├── Login.jsx        # Day 27 — login + JWT storage
-            └── Dashboard.jsx    # Day 28/29 — teacher & student dashboards
+            ├── Register.jsx         # ✅ Done — register form with role select
+            ├── Login.jsx            # ✅ Done — login + JWT storage + role redirect
+            ├── TeacherDashboard.jsx # ✅ Done — create course, add lessons, pagination
+            └── StudentDashboard.jsx # Day 29 — browse/enroll courses, read lessons
 ```
 
 ## Local Setup
@@ -119,7 +121,7 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 **Phase D — React Frontend (26–30)**
 - [x] **Day 26** — Register page: Vite + React setup, register form, axios client, success state
 - [x] **Day 27** — Login page: login form, JWT token storage in localStorage, role-based redirect
-- [ ] **Day 28** — Teacher Dashboard: create course, add lessons, view enrollments
+- [x] **Day 28** — Teacher Dashboard: create course (owner-scoped), add lessons, server-side pagination (SQLAlchemy `offset/limit`)
 - [ ] **Day 29** — Student Dashboard: browse/enroll courses, read lessons, view AI summary
 - [ ] **Day 30** — UI Polish: loading states, error messages, responsive layout, Tailwind cleanup
 
