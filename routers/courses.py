@@ -20,8 +20,8 @@ def create_course(data: CourseCreate, db: Session = Depends(get_db),current_user
     return new_course
 
 @router.get("/", response_model=list[CourseOut])
-def get_all_courses(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    courses = db.query(Course).all()
+def get_all_courses(skip: int = 0,limit: int = 10,db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
+    courses = db.query(Course).filter(Course.owner_id == current_user.id).offset(skip).limit(limit).all()
     return courses
 
 @router.get("/{course_id}", response_model=CourseOut)

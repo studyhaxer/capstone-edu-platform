@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
-export default function StudentNavbar() {
+export default function TeacherNavbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -19,12 +19,12 @@ export default function StudentNavbar() {
     <nav className="bg-blue-700 px-6 py-3 flex items-center justify-between">
       {/* Left side - Logo */}
       <div className="text-white font-bold text-lg">
-        Student Portal
+        Teacher Portal
       </div>
 
       {/* Center - Menu */}
       <div className="flex gap-2">
-        <NavLink to="/student/dashboard" className={linkClass}>
+        <NavLink to="/teacher-dashboard" className={linkClass}>
           Dashboard
         </NavLink>
 
