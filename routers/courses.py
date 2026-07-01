@@ -24,6 +24,18 @@ def get_all_courses(skip: int = 0,limit: int = 10,db: Session = Depends(get_db),
     courses = db.query(Course).filter(Course.owner_id == current_user.id).offset(skip).limit(limit).all()
     return courses
 
+
+@router.get("/all", response_model=list[CourseOut])
+def get_all_available_courses(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_any_role("student"))
+):
+    courses = db.query(Course).offset(skip).limit(limit).all()
+    return courses
+
+
 @router.get("/{course_id}", response_model=CourseOut)
 def fetch_course_byid(course_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     course = db.query(Course).filter(Course.id == course_id).first()
@@ -55,3 +67,5 @@ def delete_course(course_id: int, db: Session = Depends(get_db), current_user: U
     db.delete(course)
     db.commit()   
     return Response(status_code=204)
+
+

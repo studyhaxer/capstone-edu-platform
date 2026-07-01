@@ -24,7 +24,7 @@ export default function StudentNavbar() {
 
       {/* Center - Menu */}
       <div className="flex gap-2">
-        <NavLink to="/student/dashboard" className={linkClass}>
+        <NavLink to="/student-dashboard" className={linkClass}>
           Dashboard
         </NavLink>
 
