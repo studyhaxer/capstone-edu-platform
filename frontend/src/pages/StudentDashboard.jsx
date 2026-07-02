@@ -3,6 +3,23 @@ import { useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import StudentNavbar from "../components/StudentNavbar";
 
+function getErrorMessage(err, fallback) {
+  if (!err.response) {
+    return "Network error. Please check your connection and try again.";
+  }
+  const status = err.response.status;
+  if (status === 401 || status === 403) {
+    return "Your session has expired. Please log in again.";
+  }
+  if (status === 404) {
+    return "That item couldn't be found. It may have been removed.";
+  }
+  if (status >= 500) {
+    return "Something went wrong on our end. Please try again in a moment.";
+  }
+  return err.response?.data?.detail || fallback;
+}
+
 function StudentDashboard() {
   const navigate = useNavigate();
 
@@ -15,6 +32,7 @@ function StudentDashboard() {
   // Pagination
   const [page, setPage] = useState(1);
   const coursesPerPage = 10;
+  const [pageLoading, setPageLoading] = useState(false);
 
   // Enroll action state
   const [enrollingId, setEnrollingId] = useState(null);
@@ -27,8 +45,8 @@ function StudentDashboard() {
   const [lessonsError, setLessonsError] = useState("");
 
   // AI summary state (per-lesson)
-  const [summaries, setSummaries] = useState({}); // { [lessonId]: summaryText }
-  const [summarizingId, setSummarizingId] = useState(null); // lessonId currently loading
+  const [summaries, setSummaries] = useState({});
+  const [summarizingId, setSummarizingId] = useState(null);
   const [summaryError, setSummaryError] = useState("");
 
   // Step 1: Route guard — only students allowed
@@ -46,7 +64,7 @@ function StudentDashboard() {
       );
       setAllCourses(res.data);
     } catch (err) {
-      setError("Failed to load available courses.");
+      setError(getErrorMessage(err, "Failed to load available courses."));
     }
   };
 
@@ -56,15 +74,22 @@ function StudentDashboard() {
       const res = await axiosClient.get("/my-courses");
       setMyEnrollments(res.data);
     } catch (err) {
-      setError("Failed to load your enrollments.");
+      setError(getErrorMessage(err, "Failed to load your enrollments."));
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
+      const isFirstLoad = page === 1 && allCourses.length === 0 && myEnrollments.length === 0;
+      if (isFirstLoad) {
+        setLoading(true);
+      } else {
+        setPageLoading(true);
+      }
+      setError("");
       await Promise.all([fetchAllCourses(page), fetchMyEnrollments()]);
       setLoading(false);
+      setPageLoading(false);
     };
     loadData();
   }, [page]);
@@ -86,7 +111,7 @@ function StudentDashboard() {
       if (err.response?.status === 400) {
         setEnrollError("You're already enrolled in this course.");
       } else {
-        setEnrollError("Failed to enroll. Please try again.");
+        setEnrollError(getErrorMessage(err, "Failed to enroll. Please try again."));
       }
     } finally {
       setEnrollingId(null);
@@ -110,13 +135,12 @@ function StudentDashboard() {
       const res = await axiosClient.get(`/courses/${courseId}/lessons`);
       setLessonsByCourse((prev) => ({ ...prev, [courseId]: res.data }));
     } catch (err) {
-      setLessonsError("Failed to load lessons for this course.");
+      setLessonsError(getErrorMessage(err, "Failed to load lessons for this course."));
     } finally {
       setLessonsLoading(false);
     }
   };
 
-  // Step 6: Request AI summary for a lesson
   // Step 6: Request AI summary for a lesson (always calls API — supports Re-Summarize)
   const handleSummarize = async (lessonId) => {
     setSummaryError("");
@@ -128,7 +152,7 @@ function StudentDashboard() {
       if (err.response?.status === 400) {
         setSummaryError("This lesson has no content to summarize.");
       } else {
-        setSummaryError("Failed to generate summary. Please try again.");
+        setSummaryError(getErrorMessage(err, "Failed to generate summary. Please try again."));
       }
     } finally {
       setSummarizingId(null);
@@ -146,12 +170,20 @@ function StudentDashboard() {
     <div>
       <StudentNavbar onLogout={handleLogout} />
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <h1 className="text-2xl font-bold">Welcome to Student Dashboard</h1>
 
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        {enrollError && <p className="text-red-500 mt-2">{enrollError}</p>}
-        {loading && <p className="mt-2">Loading courses...</p>}
+        {error && (
+          <div role="alert" aria-live="polite" className="bg-red-100 text-red-700 border border-red-300 rounded-md px-4 py-2 mt-3 break-words">
+            {error}
+          </div>
+        )}
+        {enrollError && (
+          <div role="alert" aria-live="polite" className="bg-red-100 text-red-700 border border-red-300 rounded-md px-4 py-2 mt-3 break-words">
+            {enrollError}
+          </div>
+        )}
+        {loading && <p className="mt-3 text-gray-500">Loading courses...</p>}
 
         {!loading && (
           <>
@@ -159,48 +191,53 @@ function StudentDashboard() {
             <h2 className="text-xl font-semibold mt-6 mb-2">
               Available Courses
             </h2>
-            <div className="space-y-2">
-              {allCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className="border rounded p-3 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-medium">{course.title}</p>
-                    <p className="text-sm text-gray-500">
-                      {course.description}
-                    </p>
+
+            {pageLoading ? (
+              <p className="text-gray-500">Loading...</p>
+            ) : (
+              <div className="space-y-2">
+                {allCourses.map((course) => (
+                  <div
+                    key={course.id}
+                    className="border border-gray-300 rounded-md p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-medium break-words">{course.title}</p>
+                      <p className="text-sm text-gray-500 break-words">
+                        {course.description}
+                      </p>
+                    </div>
+                    {enrolledIds.has(course.id) ? (
+                      <span className="text-green-600 font-semibold shrink-0">
+                        Enrolled
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleEnroll(course.id)}
+                        disabled={enrollingId === course.id}
+                        className="bg-blue-600 text-white px-3 py-1 rounded-md disabled:opacity-50 shrink-0 w-full sm:w-auto"
+                      >
+                        {enrollingId === course.id ? "Enrolling..." : "Enroll"}
+                      </button>
+                    )}
                   </div>
-                  {enrolledIds.has(course.id) ? (
-                    <span className="text-green-600 font-semibold">
-                      Enrolled
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleEnroll(course.id)}
-                      disabled={enrollingId === course.id}
-                      className="bg-blue-600 text-white px-3 py-1 rounded disabled:opacity-50"
-                    >
-                      {enrollingId === course.id ? "Enrolling..." : "Enroll"}
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1 border rounded disabled:opacity-40"
+                disabled={page === 1 || pageLoading}
+                className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-40"
               >
                 Previous
               </button>
-              <span className="px-2 py-1">Page {page}</span>
+              <span className="px-2 py-1 text-gray-600">Page {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                disabled={allCourses.length < coursesPerPage}
-                className="px-3 py-1 border rounded disabled:opacity-40"
+                disabled={allCourses.length < coursesPerPage || pageLoading}
+                className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-40"
               >
                 Next
               </button>
@@ -211,10 +248,14 @@ function StudentDashboard() {
               My Enrolled Courses
             </h2>
             {lessonsError && (
-              <p className="text-red-500 mt-2">{lessonsError}</p>
+              <div role="alert" aria-live="polite" className="bg-red-100 text-red-700 border border-red-300 rounded-md px-4 py-2 mt-2 mb-2 break-words">
+                {lessonsError}
+              </div>
             )}
             {summaryError && (
-              <p className="text-red-500 mt-2">{summaryError}</p>
+              <div role="alert" aria-live="polite" className="bg-red-100 text-red-700 border border-red-300 rounded-md px-4 py-2 mt-2 mb-2 break-words">
+                {summaryError}
+              </div>
             )}
             <div className="space-y-2">
               {myEnrollments.length === 0 && (
@@ -223,19 +264,19 @@ function StudentDashboard() {
                 </p>
               )}
               {myEnrollments.map((course) => (
-                <div key={course.id} className="border rounded p-3">
+                <div key={course.id} className="border border-gray-300 rounded-md p-3">
                   <button
                     onClick={() => toggleCourse(course.id)}
-                    className="font-medium text-left w-full flex justify-between items-center"
+                    className="font-medium text-left w-full flex justify-between items-center gap-2"
                   >
-                    {course.title}
-                    <span className="text-sm text-gray-400">
+                    <span className="break-words">{course.title}</span>
+                    <span className="text-sm text-gray-400 shrink-0">
                       {expandedCourseId === course.id ? "▲" : "▼"}
                     </span>
                   </button>
 
                   {expandedCourseId === course.id && (
-                    <div className="mt-3 pl-3 border-l space-y-2">
+                    <div className="mt-3 pl-3 border-l border-gray-300 space-y-2">
                       {lessonsLoading && !lessonsByCourse[course.id] && (
                         <p className="text-sm text-gray-500">
                           Loading lessons...
@@ -247,16 +288,16 @@ function StudentDashboard() {
                         </p>
                       )}
                       {lessonsByCourse[course.id]?.map((lesson) => (
-                        <div key={lesson.id} className="border rounded p-2">
-                          <p className="font-medium">{lesson.title}</p>
-                          <p className="text-sm text-gray-600">
+                        <div key={lesson.id} className="border border-gray-300 rounded-md p-2">
+                          <p className="font-medium break-words">{lesson.title}</p>
+                          <p className="text-sm text-gray-600 break-words">
                             {lesson.content}
                           </p>
 
                           <button
                             onClick={() => handleSummarize(lesson.id)}
                             disabled={summarizingId === lesson.id}
-                            className="mt-2 text-sm bg-purple-600 text-white px-2 py-1 rounded disabled:opacity-50"
+                            className="mt-2 text-sm bg-purple-600 text-white px-2 py-1 rounded-md disabled:opacity-50 w-full sm:w-auto"
                           >
                             {summarizingId === lesson.id
                               ? "Summarizing..."
@@ -266,7 +307,7 @@ function StudentDashboard() {
                           </button>
 
                           {summaries[lesson.id] && (
-                            <p className="text-sm text-gray-700 mt-2 bg-gray-100 p-2 rounded">
+                            <p className="text-sm text-gray-700 mt-2 bg-gray-100 p-2 rounded-md break-words">
                               {summaries[lesson.id]}
                             </p>
                           )}

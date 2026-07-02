@@ -69,10 +69,10 @@ capstone-edu-platform/
         │   ├── TeacherNavbar.jsx    # Teacher portal navigation bar
         │   └── StudentNavbar.jsx    # Student portal navigation bar
         └── pages/
-            ├── Register.jsx         # ✅ Done — register form with role select
-            ├── Login.jsx            # ✅ Done — login + JWT storage + role redirect
-            ├── TeacherDashboard.jsx # ✅ Done — create course, add lessons, pagination
-            └── StudentDashboard.jsx # ✅ Done — browse/enroll courses, read lessons, AI summaries
+            ├── Register.jsx         # ✅ Done — register form with role select, polished loading/error states
+            ├── Login.jsx            # ✅ Done — login + JWT storage + role redirect, polished loading/error states
+            ├── TeacherDashboard.jsx # ✅ Done — create course, add lessons, pagination, polished loading/error states
+            └── StudentDashboard.jsx # ✅ Done — browse/enroll courses, read lessons, AI summaries, polished loading/error states
 ```
 
 ## Local Setup
@@ -124,7 +124,7 @@ Visit `http://localhost:8000/docs` for the interactive API docs.
 - [x] **Day 27** — Login page: login form, JWT token storage in localStorage, role-based redirect
 - [x] **Day 28** — Teacher Dashboard: create course (owner-scoped), add lessons, server-side pagination (SQLAlchemy `offset/limit`)
 - [x] **Day 29** — Student Dashboard: browse/enroll courses, read lessons, view AI summary (with Re-Summarize)
-- [ ] **Day 30** — UI Polish: loading states, error messages, responsive layout, Tailwind cleanup
+- [x] **Day 30** — UI Polish: consistent loading states across all async actions, categorized error messages (auth/validation/network), responsive layout at 375px, unified Tailwind spacing/color tokens
 
 **Phase E — Deployment (31–33)**
 - [ ] **Day 31** — PostgreSQL migration + `.env` config

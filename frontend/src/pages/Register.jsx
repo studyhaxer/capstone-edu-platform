@@ -1,6 +1,23 @@
 import { useState } from "react";
 import axiosClient from "../api/axiosClient";
 
+function getErrorMessage(err, fallback) {
+  if (!err.response) {
+    return "Network error. Please check your connection and try again.";
+  }
+  const status = err.response.status;
+  if (status === 400 || status === 422) {
+    return err.response?.data?.detail || "Please check your details — email may already be in use.";
+  }
+  if (status === 401 || status === 403) {
+    return err.response?.data?.detail || "You're not authorized to do that.";
+  }
+  if (status >= 500) {
+    return "Something went wrong on our end. Please try again in a moment.";
+  }
+  return err.response?.data?.detail || fallback;
+}
+
 function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -31,16 +48,15 @@ function Register() {
       setSuccessMsg(`Account created for ${res.data.name || formData.name}! You can now log in.`);
       setFormData({ name: "", email: "", password: "", role: "student" });
     } catch (err) {
-      const detail = err.response?.data?.detail || "Registration failed. Please try again.";
-      setErrorMsg(detail);
+      setErrorMsg(getErrorMessage(err, "Registration failed. Please try again."));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-md bg-white shadow-md rounded-md p-6 sm:p-8">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-1">
           Create an Account
         </h1>
@@ -49,13 +65,13 @@ function Register() {
         </p>
 
         {successMsg && (
-          <div className="bg-green-100 text-green-700 text-sm rounded-md px-4 py-2 mb-4">
+          <div role="status" aria-live="polite" className="bg-green-100 text-green-700 border border-green-300 text-sm rounded-md px-4 py-2 mb-4 break-words">
             {successMsg}
           </div>
         )}
 
         {errorMsg && (
-          <div className="bg-red-100 text-red-700 text-sm rounded-md px-4 py-2 mb-4">
+          <div role="alert" aria-live="polite" className="bg-red-100 text-red-700 border border-red-300 text-sm rounded-md px-4 py-2 mb-4 break-words">
             {errorMsg}
           </div>
         )}
@@ -71,7 +87,9 @@ function Register() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoFocus
+              disabled={loading}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               placeholder="Hafiz Atta"
             />
           </div>
@@ -86,7 +104,8 @@ function Register() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               placeholder="you@example.com"
             />
           </div>
@@ -102,7 +121,8 @@ function Register() {
               onChange={handleChange}
               required
               minLength={6}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               placeholder="••••••••"
             />
           </div>
@@ -115,7 +135,8 @@ function Register() {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
             >
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
